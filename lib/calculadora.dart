@@ -11,19 +11,19 @@ class CalculadoraApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: const Calculadora(),
+      home: const CalculadoraComImagem(),
     );
   }
 }
 
-class Calculadora extends StatefulWidget {
-  const Calculadora({super.key});
+class CalculadoraComImagem extends StatefulWidget {
+  const CalculadoraComImagem({super.key});
 
   @override
-  State<Calculadora> createState() => _CalculadoraState(); // ✅ CORRIGIDO: Retorno explícito
+  State<CalculadoraComImagem> createState() => _CalculadoraComImagemState();
 }
 
-class _CalculadoraState extends State<Calculadora> {
+class _CalculadoraComImagemState extends State<CalculadoraComImagem> {
   String _expressao = '';
   String _resultado = '0';
 
@@ -45,11 +45,10 @@ class _CalculadoraState extends State<Calculadora> {
   }
 
   void _calcularResultado() {
-    // ✅ CORRIGIDO: Tratamento completo dos operadores
     String expressaoFinal = _expressao
-        .replaceAll('×', '*')  // Multiplicação
-        .replaceAll('÷', '/')  // Divisão
-        .replaceAll('x', '*'); // Caso use 'x'
+        .replaceAll('×', '*')
+        .replaceAll('÷', '/')
+        .replaceAll('x', '*');
 
     final expression = Expression.parse(expressaoFinal);
     final evaluator = const ExpressionEvaluator();
@@ -68,18 +67,15 @@ class _CalculadoraState extends State<Calculadora> {
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.all(24),
             backgroundColor: cor ?? Colors.grey[850],
-            foregroundColor: Colors.white, // ✅ ADICIONADO: Cor do texto
+            foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
             ),
           ),
           onPressed: () => _pressionarBotao(texto),
           child: Text(
             texto,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -89,69 +85,191 @@ class _CalculadoraState extends State<Calculadora> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // ✅ ADICIONADO: Fundo escuro
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Calculadora'),
-        backgroundColor: Colors.black87,
+        title: const Text('🧮 Calculadora Pro'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         foregroundColor: Colors.white,
       ),
-      body: Column(
+      body: Row(
         children: [
-          // Display de resultados
+          // 🎨 LADO DA IMAGEM (40% da tela)
           Expanded(
-            flex: 2, // ✅ ADICIONADO: Proporção melhor
+            flex: 2,
             child: Container(
-              padding: const EdgeInsets.all(24),
-              alignment: Alignment.bottomRight,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.purple.shade400,
+                    Colors.blue.shade600,
+                    Colors.indigo.shade700,
+                  ],
+                ),
+              ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    _expressao.isEmpty ? '0' : _expressao,
-                    style: TextStyle(
-                      fontSize: 32,
-                      color: Colors.grey[400],
+                  // Ícone grande da calculadora
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 20,
+                          spreadRadius: 5,
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    _resultado,
-                    style: TextStyle(
-                      fontSize: 64,
-                      fontWeight: FontWeight.w600,
+                    child: const Icon(
+                      Icons.calculate_outlined,
+                      size: 60,
                       color: Colors.white,
                     ),
+                  ),
+                  const SizedBox(height: 30),
+                  // Animações de números
+                  Column(
+                    children: [
+                      Text(
+                        '🎯',
+                        style: TextStyle(fontSize: 40),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Precisão Total',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Matemática Perfeita',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                  // Botões decorativos
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _botaoDecorativo(Icons.history, 'Histórico'),
+                      _botaoDecorativo(Icons.settings, 'Config'),
+                    ],
                   ),
                 ],
               ),
             ),
           ),
-          // Teclado ✅ CORRIGIDO: Layout completo
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.6,
+          // 📱 LADO DA CALCULADORA (60% da tela)
+          Expanded(
+            flex: 3,
             child: Column(
               children: [
-                Row(children: [
-                  _criarBotao('7'), _criarBotao('8'), _criarBotao('9'), _criarBotao('÷', cor: Colors.orange),
-                ]),
-                Row(children: [
-                  _criarBotao('4'), _criarBotao('5'), _criarBotao('6'), _criarBotao('×', cor: Colors.orange),
-                ]),
-                Row(children: [
-                  _criarBotao('1'), _criarBotao('2'), _criarBotao('3'), _criarBotao('-', cor: Colors.orange),
-                ]),
-                Row(children: [
-                  _criarBotao('C', cor: Colors.redAccent),
-                  _criarBotao('0'),
-                  _criarBotao('=', cor: Colors.green),
-                  _criarBotao('+', cor: Colors.orange),
-                ]),
+                // Display
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    margin: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[900],
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                    alignment: Alignment.bottomRight,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          _expressao.isEmpty ? '0' : _expressao,
+                          style: TextStyle(
+                            fontSize: 28,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          _resultado,
+                          style: const TextStyle(
+                            fontSize: 56,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Teclado
+                Expanded(
+                  flex: 3,
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Row(children: [
+                          _criarBotao('7'), _criarBotao('8'), _criarBotao('9'), _criarBotao('÷', cor: Colors.orange),
+                        ]),
+                        Row(children: [
+                          _criarBotao('4'), _criarBotao('5'), _criarBotao('6'), _criarBotao('×', cor: Colors.orange),
+                        ]),
+                        Row(children: [
+                          _criarBotao('1'), _criarBotao('2'), _criarBotao('3'), _criarBotao('-', cor: Colors.orange),
+                        ]),
+                        Row(children: [
+                          _criarBotao('C', cor: Colors.redAccent),
+                          _criarBotao('0'),
+                          _criarBotao('=', cor: Colors.green),
+                          _criarBotao('+', cor: Colors.orange),
+                        ]),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _botaoDecorativo(IconData icon, String texto) {
+    return Column(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.2),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: Colors.white, size: 28),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          texto,
+          style: TextStyle(color: Colors.white70, fontSize: 12),
+        ),
+      ],
     );
   }
 }
